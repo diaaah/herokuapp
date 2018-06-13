@@ -1,0 +1,64 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class kondisi_buku extends CI_Controller {
+
+	/**
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see https://codeigniter.com/user_guide/general/urls.html
+	 */
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('ditail_buku_model');
+		$this->load->model('buku_model');
+		if($this->session->userdata('status') != "login"){
+			redirect('../index.php/welcome/view_halaman_login');
+		}
+	}
+
+	public function view_formDitail(){
+		$data['buku']=$this->buku_model->view_buku();
+		$this->load->view('formulir_ditail_buku',$data);
+	}
+
+	public function view_editDitail(){
+		$id_ditail=$this->input->get('id_ditail');
+		$data['ditail']=$this->ditail_buku_model->view_update_ditail($id_ditail);
+		$data['buku']=$this->buku_model->view_buku();
+		$this->load->view('edit_ditail_buku',$data);
+	}
+
+	public function insert_ditail(){
+		$id_buku=$this->input->post('id_buku');
+		$id_kondisi=$this->input->post('id_kondisi');
+		$kode_buku=$this->input->post('kode');
+		$this->ditail_buku_model->input_diatil($id_buku,$id_kondisi,$kode_buku);
+		redirect('../index.php/ditail_buku/view_ditail');
+	}
+
+	public function edit_ditail(){
+		$id_ditail=$this->input->post('id_ditail');
+		$id_buku=$this->input->post('id_buku');
+		$id_kondisi=$this->input->post('id_kondisi');
+		$kode_buku=$this->input->post('kode');
+		$this->ditail_buku_model->update_diatil($id_ditail,$id_buku,$id_kondisi,$kode_buku);
+		redirect('../index.php/ditail_buku/view_ditail');
+	}
+
+	public function hapus_ditail(){
+		$id=$this->input->get('id_ditail');
+		$this->pengarang_model->delete_ditail_buku($id);
+		redirect('../index.php/ditail_buku/view_ditail');
+	}
+}
